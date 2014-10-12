@@ -7,6 +7,12 @@ and this gem adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-03-22
+
+### Changed
+
+- Expand test coverage to 30+ examples with edge cases for decrement, negative values, empty counters, defensive copies, Enumerable methods, and mixed types
+
 ## [0.1.0] - 2026-03-22
 
 ### Added

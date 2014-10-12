@@ -144,5 +144,152 @@ RSpec.describe Philiprehberger::Counter do
       counter = described_class.new(%w[a b a])
       expect(counter.size).to eq(2)
     end
+
+    it 'returns 0 for empty counter' do
+      expect(described_class.new.size).to eq(0)
+    end
+  end
+
+  describe '#increment with negative values' do
+    it 'decrements when given a negative amount' do
+      counter = described_class.new(%w[a a a])
+      counter.increment('a', -1)
+      expect(counter['a']).to eq(2)
+    end
+
+    it 'allows count to go below zero' do
+      counter = described_class.new
+      counter.increment('x', -5)
+      expect(counter['x']).to eq(-5)
+    end
+
+    it 'increments by zero leaving count unchanged' do
+      counter = described_class.new(%w[a])
+      counter.increment('a', 0)
+      expect(counter['a']).to eq(1)
+    end
+  end
+
+  describe '#subtract edge cases' do
+    it 'returns empty counter when subtracting from empty' do
+      a = described_class.new
+      b = described_class.new(%w[x])
+      result = a.subtract(b)
+      expect(result['x']).to eq(-1)
+    end
+
+    it 'raises Error for non-counter argument' do
+      counter = described_class.new
+      expect { counter.subtract('nope') }.to raise_error(described_class::Error)
+    end
+
+    it 'returns copy when subtracting empty counter' do
+      a = described_class.new(%w[x y])
+      b = described_class.new
+      result = a.subtract(b)
+      expect(result['x']).to eq(1)
+      expect(result['y']).to eq(1)
+    end
+  end
+
+  describe '#merge edge cases' do
+    it 'merges two empty counters' do
+      a = described_class.new
+      b = described_class.new
+      result = a.merge(b)
+      expect(result.total).to eq(0)
+      expect(result.size).to eq(0)
+    end
+
+    it 'merges into empty counter' do
+      a = described_class.new
+      b = described_class.new(%w[x x])
+      result = a.merge(b)
+      expect(result['x']).to eq(2)
+    end
+  end
+
+  describe '#to_h' do
+    it 'returns empty hash for empty counter' do
+      expect(described_class.new.to_h).to eq({})
+    end
+
+    it 'returns a defensive copy' do
+      counter = described_class.new(%w[a])
+      hash = counter.to_h
+      hash['a'] = 999
+      expect(counter['a']).to eq(1)
+    end
+  end
+
+  describe '#percentage edge cases' do
+    it 'returns 100.0 for single-key counter' do
+      counter = described_class.new(%w[a a a])
+      expect(counter.percentage('a')).to eq(100.0)
+    end
+
+    it 'returns 0.0 for missing key in non-empty counter' do
+      counter = described_class.new(%w[a b])
+      expect(counter.percentage('z')).to eq(0.0)
+    end
+  end
+
+  describe '#most_common edge cases' do
+    it 'returns empty array for empty counter' do
+      expect(described_class.new.most_common).to eq([])
+    end
+
+    it 'returns empty array when n is 0' do
+      counter = described_class.new(%w[a b])
+      expect(counter.most_common(0)).to eq([])
+    end
+  end
+
+  describe '#least_common edge cases' do
+    it 'returns empty array for empty counter' do
+      expect(described_class.new.least_common).to eq([])
+    end
+
+    it 'returns all when n exceeds size' do
+      counter = described_class.new(%w[a])
+      expect(counter.least_common(5)).to eq([['a', 1]])
+    end
+  end
+
+  describe 'Enumerable advanced' do
+    it 'supports select' do
+      counter = described_class.new(%w[a a b c c c])
+      result = counter.select { |_, count| count > 1 }
+      expect(result).to contain_exactly(['a', 2], ['c', 3])
+    end
+
+    it 'supports min_by' do
+      counter = described_class.new(%w[a a b c c c])
+      expect(counter.min_by { |_, count| count }).to eq(['b', 1])
+    end
+
+    it 'supports count' do
+      counter = described_class.new(%w[a b c])
+      expect(counter.count).to eq(3)
+    end
+  end
+
+  describe 'initialization with various enumerables' do
+    it 'counts from a range' do
+      counter = described_class.new([1, 2, 2, 3, 3, 3])
+      expect(counter[3]).to eq(3)
+    end
+
+    it 'counts symbols' do
+      counter = described_class.new(%i[a b a])
+      expect(counter[:a]).to eq(2)
+    end
+
+    it 'counts mixed types' do
+      counter = described_class.new([1, 'a', 1, :b, 'a'])
+      expect(counter[1]).to eq(2)
+      expect(counter['a']).to eq(2)
+      expect(counter[:b]).to eq(1)
+    end
   end
 end
