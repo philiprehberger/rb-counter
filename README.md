@@ -27,7 +27,7 @@ gem install philiprehberger-counter
 ## Usage
 
 ```ruby
-require 'philiprehberger/counter'
+require "philiprehberger/counter"
 
 counter = Philiprehberger::Counter.new(%w[a b a c a b])
 counter['a']            # => 3
@@ -82,8 +82,8 @@ counter.map { |key, count| "#{key}: #{count}" }
 
 ```bash
 bundle install
-bundle exec rspec      # Run tests
-bundle exec rubocop    # Check code style
+bundle exec rspec
+bundle exec rubocop
 ```
 
 ## License
