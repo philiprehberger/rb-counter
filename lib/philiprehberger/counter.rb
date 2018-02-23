@@ -108,8 +108,8 @@ module Philiprehberger
     # Iterate over key-count pairs
     #
     # @yield [key, count]
-    def each(&block)
-      @counts.each(&block)
+    def each(&)
+      @counts.each(&)
     end
 
     # Number of unique keys
