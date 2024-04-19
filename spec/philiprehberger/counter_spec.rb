@@ -292,4 +292,111 @@ RSpec.describe Philiprehberger::Counter do
       expect(counter[:b]).to eq(1)
     end
   end
+
+  describe '#decrement' do
+    it 'decrements by 1 by default' do
+      counter = described_class.new(%w[a a a])
+      counter.decrement('a')
+      expect(counter['a']).to eq(2)
+    end
+
+    it 'decrements by a custom amount' do
+      counter = described_class.new(%w[a a a a a])
+      counter.decrement('a', 3)
+      expect(counter['a']).to eq(2)
+    end
+
+    it 'floors at zero' do
+      counter = described_class.new(%w[a])
+      counter.decrement('a', 5)
+      expect(counter['a']).to eq(0)
+    end
+
+    it 'floors at zero for missing key' do
+      counter = described_class.new
+      counter.decrement('x')
+      expect(counter['x']).to eq(0)
+    end
+  end
+
+  describe '#reset' do
+    it 'resets a specific key' do
+      counter = described_class.new(%w[a b c])
+      counter.reset('a')
+      expect(counter['a']).to eq(0)
+      expect(counter['b']).to eq(1)
+    end
+
+    it 'clears all counts when no key given' do
+      counter = described_class.new(%w[a b c])
+      counter.reset
+      expect(counter.total).to eq(0)
+      expect(counter.size).to eq(0)
+    end
+
+    it 'does nothing for missing key' do
+      counter = described_class.new(%w[a])
+      counter.reset('z')
+      expect(counter['a']).to eq(1)
+    end
+  end
+
+  describe '#update' do
+    it 'updates from a hash' do
+      counter = described_class.new(%w[a])
+      counter.update({ 'a' => 3, 'b' => 2 })
+      expect(counter['a']).to eq(4)
+      expect(counter['b']).to eq(2)
+    end
+
+    it 'updates from an enumerable' do
+      counter = described_class.new
+      counter.update(%w[x y x])
+      expect(counter['x']).to eq(2)
+      expect(counter['y']).to eq(1)
+    end
+
+    it 'returns self for chaining' do
+      counter = described_class.new
+      result = counter.update(%w[a])
+      expect(result).to be(counter)
+    end
+
+    it 'raises Error for invalid argument' do
+      counter = described_class.new
+      expect { counter.update(123) }.to raise_error(described_class::Error)
+    end
+  end
+
+  describe '#filter_by_count' do
+    it 'filters by minimum count' do
+      counter = described_class.new(%w[a a a b b c])
+      result = counter.filter_by_count(min: 2)
+      expect(result['a']).to eq(3)
+      expect(result['b']).to eq(2)
+      expect(result['c']).to eq(0)
+    end
+
+    it 'filters by maximum count' do
+      counter = described_class.new(%w[a a a b b c])
+      result = counter.filter_by_count(max: 2)
+      expect(result['b']).to eq(2)
+      expect(result['c']).to eq(1)
+      expect(result['a']).to eq(0)
+    end
+
+    it 'filters by both min and max' do
+      counter = described_class.new(%w[a a a b b c])
+      result = counter.filter_by_count(min: 2, max: 2)
+      expect(result['b']).to eq(2)
+      expect(result['a']).to eq(0)
+      expect(result['c']).to eq(0)
+    end
+
+    it 'returns empty counter when nothing matches' do
+      counter = described_class.new(%w[a b])
+      result = counter.filter_by_count(min: 5)
+      expect(result.size).to eq(0)
+    end
+  end
 end
