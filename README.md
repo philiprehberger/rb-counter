@@ -81,6 +81,47 @@ counter.update({ 'x' => 10 })       # add from hash
 counter['x']                         # => 12
 ```
 
+### Delete
+
+```ruby
+counter = Philiprehberger::Counter.new(%w[a a b c])
+counter.delete('a')  # => 2 (removes key entirely)
+counter.delete('z')  # => nil (key not present)
+```
+
+### Min and Max
+
+```ruby
+counter = Philiprehberger::Counter.new(%w[a b a c a b])
+counter.max_count  # => ["a", 3]
+counter.min_count  # => ["c", 1]
+```
+
+### JSON Serialization
+
+```ruby
+counter = Philiprehberger::Counter.new(%w[a b a])
+json = counter.to_json              # => '{"a":2,"b":1}'
+restored = Philiprehberger::Counter.from_json(json)
+restored['a']                        # => 2
+```
+
+### Weighted Sampling
+
+```ruby
+counter = Philiprehberger::Counter.new(%w[a a a b])
+counter.sample      # => "a" (weighted by count)
+counter.sample(3)   # => ["a", "a", "b"] (array of weighted samples)
+```
+
+### Keys and Values
+
+```ruby
+counter = Philiprehberger::Counter.new(%w[a b a])
+counter.keys    # => ["a", "b"]
+counter.values  # => [2, 1]
+```
+
 ### Filtering
 
 ```ruby
@@ -105,6 +146,14 @@ frequent.to_h  # => {"a" => 3, "b" => 2}
 | `#decrement(key, n)` | Decrement count for a key, floored at zero |
 | `#reset(key)` | Reset a specific key or clear all counts |
 | `#update(data)` | Batch update from a Hash or Enumerable |
+| `#delete(key)` | Remove a key entirely, returns count or nil |
+| `#max_count` | Key-count pair with highest count |
+| `#min_count` | Key-count pair with lowest count |
+| `#to_json` | Serialize counter to JSON string |
+| `.from_json(str)` | Deserialize counter from JSON string |
+| `#sample(n)` | Weighted random sample based on counts |
+| `#keys` | Return all tracked keys |
+| `#values` | Return all count values |
 | `#filter_by_count(min:, max:)` | Filter entries by count range |
 | `#to_h` | Convert to a plain hash |
 | `#size` | Number of unique keys |

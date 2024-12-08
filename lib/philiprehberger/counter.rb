@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'json'
 require_relative 'counter/version'
 
 module Philiprehberger
@@ -149,6 +150,87 @@ module Philiprehberger
       return 0.0 if total.zero?
 
       (@counts[key].to_f / total * 100)
+    end
+
+    # Delete a key entirely from the counter
+    #
+    # @param key [Object]
+    # @return [Integer, nil] the count that was removed, or nil if key not present
+    def delete(key)
+      @counts.delete(key)
+    end
+
+    # Return the [key, count] pair with the highest count
+    #
+    # @return [Array, nil] [key, count] or nil if empty
+    def max_count
+      return nil if @counts.empty?
+
+      @counts.max_by { |_, count| count }
+    end
+
+    # Return the [key, count] pair with the lowest count
+    #
+    # @return [Array, nil] [key, count] or nil if empty
+    def min_count
+      return nil if @counts.empty?
+
+      @counts.min_by { |_, count| count }
+    end
+
+    # Serialize the counter to a JSON string
+    #
+    # @return [String]
+    def to_json(*_args)
+      @counts.to_json
+    end
+
+    # Deserialize a counter from a JSON string
+    #
+    # @param str [String] JSON string
+    # @return [Counter]
+    def self.from_json(str)
+      data = JSON.parse(str)
+      counter = new
+      data.each { |key, count| counter.increment(key, count) }
+      counter
+    end
+
+    # Weighted random sample based on counts
+    #
+    # @param n [Integer] number of samples (default 1)
+    # @return [Object, Array] single item when n=1, array when n>1
+    def sample(n = 1)
+      return (n == 1 ? nil : []) if @counts.empty?
+
+      keys_arr = []
+      @counts.each do |key, count|
+        next if count <= 0
+
+        keys_arr.concat(Array.new(count, key))
+      end
+
+      return (n == 1 ? nil : []) if keys_arr.empty?
+
+      if n == 1
+        keys_arr.sample
+      else
+        Array.new(n) { keys_arr.sample }
+      end
+    end
+
+    # Return all tracked keys
+    #
+    # @return [Array]
+    def keys
+      @counts.keys
+    end
+
+    # Return all count values
+    #
+    # @return [Array<Integer>]
+    def values
+      @counts.values
     end
 
     # Convert to a plain hash
