@@ -15,7 +15,7 @@ Frequency counter with most-common, merge, and percentage operations
 Add to your Gemfile:
 
 ```ruby
-gem 'philiprehberger-counter'
+gem "philiprehberger-counter"
 ```
 
 Or install directly:
