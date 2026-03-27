@@ -3,6 +3,7 @@
 [![Tests](https://github.com/philiprehberger/rb-counter/actions/workflows/ci.yml/badge.svg)](https://github.com/philiprehberger/rb-counter/actions/workflows/ci.yml)
 [![Gem Version](https://badge.fury.io/rb/philiprehberger-counter.svg)](https://rubygems.org/gems/philiprehberger-counter)
 [![License](https://img.shields.io/github/license/philiprehberger/rb-counter)](LICENSE)
+[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
 
 Frequency counter with most-common, merge, and percentage operations
 
