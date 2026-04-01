@@ -7,6 +7,14 @@ and this gem adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-04-01
+
+### Added
+- `#decrement(key, n)` method to decrease counts, floored at zero
+- `#reset(key)` method to clear a specific key or all counts
+- `#update(data)` method for batch updates from Hash or Enumerable
+- `#filter_by_count(min:, max:)` method to filter entries by count range
+
 ## [0.1.5] - 2026-03-31
 
 ### Added

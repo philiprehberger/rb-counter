@@ -37,6 +37,59 @@ module Philiprehberger
       @counts[key] += n
     end
 
+    # Decrement count for a key, floored at zero
+    #
+    # @param key [Object]
+    # @param n [Integer] amount to decrement
+    # @return [Integer] new count
+    def decrement(key, n = 1)
+      @counts[key] = [(@counts[key] - n), 0].max
+    end
+
+    # Reset counts — clear a specific key or all counts
+    #
+    # @param key [Object, nil] key to reset, or nil to clear all
+    # @return [void]
+    def reset(key = nil)
+      if key.nil?
+        @counts.clear
+      else
+        @counts.delete(key)
+      end
+    end
+
+    # Batch update counts from a Hash or Enumerable
+    #
+    # @param data [Hash, Enumerable] Hash of key => count, or Enumerable of items to count
+    # @return [self]
+    def update(data)
+      case data
+      when Hash
+        data.each { |key, count| @counts[key] += count }
+      when Enumerable
+        data.each { |item| @counts[item] += 1 }
+      else
+        raise Error, 'argument must be a Hash or Enumerable'
+      end
+      self
+    end
+
+    # Filter entries by count range
+    #
+    # @param min [Integer, nil] minimum count (inclusive)
+    # @param max [Integer, nil] maximum count (inclusive)
+    # @return [Counter] new counter with filtered entries
+    def filter_by_count(min: nil, max: nil)
+      result = Counter.new
+      each do |key, count|
+        next if min && count < min
+        next if max && count > max
+
+        result.increment(key, count)
+      end
+      result
+    end
+
     # Return the n most common elements and their counts
     #
     # @param n [Integer, nil] number of elements to return

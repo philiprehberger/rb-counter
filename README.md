@@ -62,6 +62,33 @@ counter.map { |key, count| "#{key}: #{count}" }
 # => ["a: 2", "b: 1"]
 ```
 
+### Decrement and Reset
+
+```ruby
+counter = Philiprehberger::Counter.new(%w[a a a b])
+counter.decrement('a')     # => 2
+counter.decrement('a', 2)  # => 0
+counter.reset('b')         # removes 'b'
+counter.reset              # clears all
+```
+
+### Batch Update
+
+```ruby
+counter = Philiprehberger::Counter.new
+counter.update(%w[x y x z])         # count from enumerable
+counter.update({ 'x' => 10 })       # add from hash
+counter['x']                         # => 12
+```
+
+### Filtering
+
+```ruby
+counter = Philiprehberger::Counter.new(%w[a a a b b c])
+frequent = counter.filter_by_count(min: 2)
+frequent.to_h  # => {"a" => 3, "b" => 2}
+```
+
 ## API
 
 | Method | Description |
@@ -75,6 +102,10 @@ counter.map { |key, count| "#{key}: #{count}" }
 | `#merge(other)` | Merge two counters |
 | `#subtract(other)` | Subtract another counter |
 | `#percentage(key)` | Percentage of key relative to total |
+| `#decrement(key, n)` | Decrement count for a key, floored at zero |
+| `#reset(key)` | Reset a specific key or clear all counts |
+| `#update(data)` | Batch update from a Hash or Enumerable |
+| `#filter_by_count(min:, max:)` | Filter entries by count range |
 | `#to_h` | Convert to a plain hash |
 | `#size` | Number of unique keys |
 
