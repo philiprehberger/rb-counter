@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary = 'Frequency counter with most-common, merge, and percentage operations'
   spec.description = 'Count element frequencies from any enumerable with most-common and least-common queries, ' \
-                       'merge and subtract operations, percentage calculations, and Enumerable support.'
+                     'merge and subtract operations, percentage calculations, and Enumerable support.'
   spec.homepage = 'https://philiprehberger.com/open-source-packages/ruby/philiprehberger-counter'
   spec.license = 'MIT'
 
