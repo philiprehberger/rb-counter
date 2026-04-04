@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'json'
 require 'spec_helper'
 
 RSpec.describe Philiprehberger::Counter do
@@ -365,6 +366,140 @@ RSpec.describe Philiprehberger::Counter do
     it 'raises Error for invalid argument' do
       counter = described_class.new
       expect { counter.update(123) }.to raise_error(described_class::Error)
+    end
+  end
+
+  describe '#delete' do
+    it 'removes a key entirely and returns its count' do
+      counter = described_class.new(%w[a a b])
+      result = counter.delete('a')
+      expect(result).to eq(2)
+      expect(counter.size).to eq(1)
+      expect(counter['a']).to eq(0)
+    end
+
+    it 'returns nil for a missing key' do
+      counter = described_class.new(%w[a])
+      expect(counter.delete('z')).to be_nil
+    end
+
+    it 'works on empty counter' do
+      counter = described_class.new
+      expect(counter.delete('x')).to be_nil
+    end
+  end
+
+  describe '#max_count' do
+    it 'returns the key-count pair with highest count' do
+      counter = described_class.new(%w[a b a c a b])
+      expect(counter.max_count).to eq(['a', 3])
+    end
+
+    it 'returns nil for empty counter' do
+      expect(described_class.new.max_count).to be_nil
+    end
+
+    it 'returns the single entry for single-key counter' do
+      counter = described_class.new(%w[x x])
+      expect(counter.max_count).to eq(['x', 2])
+    end
+  end
+
+  describe '#min_count' do
+    it 'returns the key-count pair with lowest count' do
+      counter = described_class.new(%w[a b a c a b])
+      expect(counter.min_count).to eq(['c', 1])
+    end
+
+    it 'returns nil for empty counter' do
+      expect(described_class.new.min_count).to be_nil
+    end
+
+    it 'returns the single entry for single-key counter' do
+      counter = described_class.new(%w[x])
+      expect(counter.min_count).to eq(['x', 1])
+    end
+  end
+
+  describe '#to_json / .from_json' do
+    it 'serializes to JSON string' do
+      counter = described_class.new(%w[a b a])
+      json = counter.to_json
+      parsed = JSON.parse(json)
+      expect(parsed).to eq({ 'a' => 2, 'b' => 1 })
+    end
+
+    it 'deserializes from JSON string' do
+      counter = described_class.from_json('{"x":3,"y":1}')
+      expect(counter['x']).to eq(3)
+      expect(counter['y']).to eq(1)
+    end
+
+    it 'roundtrips correctly' do
+      original = described_class.new(%w[a b a c])
+      json = original.to_json
+      restored = described_class.from_json(json)
+      expect(restored.to_h).to eq(original.to_h)
+    end
+
+    it 'handles empty counter roundtrip' do
+      original = described_class.new
+      json = original.to_json
+      restored = described_class.from_json(json)
+      expect(restored.size).to eq(0)
+    end
+  end
+
+  describe '#sample' do
+    it 'returns a single item by default' do
+      counter = described_class.new(%w[a a a])
+      expect(counter.sample).to eq('a')
+    end
+
+    it 'returns an array when n > 1' do
+      counter = described_class.new(%w[a a a])
+      result = counter.sample(3)
+      expect(result).to be_an(Array)
+      expect(result.length).to eq(3)
+      expect(result).to all(eq('a'))
+    end
+
+    it 'returns nil for empty counter with n=1' do
+      expect(described_class.new.sample).to be_nil
+    end
+
+    it 'returns empty array for empty counter with n>1' do
+      expect(described_class.new.sample(3)).to eq([])
+    end
+
+    it 'only samples from keys with positive counts' do
+      counter = described_class.new(%w[a a a])
+      counter.increment('b', -1)
+      100.times do
+        expect(counter.sample).to eq('a')
+      end
+    end
+  end
+
+  describe '#keys' do
+    it 'returns all tracked keys' do
+      counter = described_class.new(%w[a b c])
+      expect(counter.keys).to contain_exactly('a', 'b', 'c')
+    end
+
+    it 'returns empty array for empty counter' do
+      expect(described_class.new.keys).to eq([])
+    end
+  end
+
+  describe '#values' do
+    it 'returns all count values' do
+      counter = described_class.new(%w[a a b])
+      expect(counter.values).to contain_exactly(2, 1)
+    end
+
+    it 'returns empty array for empty counter' do
+      expect(described_class.new.values).to eq([])
     end
   end
 

@@ -7,6 +7,18 @@ and this gem adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-04-03
+
+### Added
+- `#delete(key)` method to remove a key entirely, returning its count or nil
+- `#max_count` method returning `[key, count]` pair with highest count
+- `#min_count` method returning `[key, count]` pair with lowest count
+- `#to_json` method for JSON string serialization
+- `.from_json(str)` class method to deserialize from JSON string
+- `#sample(n)` method for weighted random sampling based on counts
+- `#keys` method to return all tracked keys
+- `#values` method to return all count values
+
 ## [0.2.0] - 2026-04-01
 
 ### Added
