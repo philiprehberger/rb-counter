@@ -503,6 +503,33 @@ RSpec.describe Philiprehberger::Counter do
     end
   end
 
+  describe '#entropy' do
+    it 'returns 0.0 for an empty counter' do
+      expect(described_class.new.entropy).to eq(0.0)
+    end
+
+    it 'returns 0.0 when only one key has a positive count' do
+      counter = described_class.new(%w[a a a])
+      expect(counter.entropy).to eq(0.0)
+    end
+
+    it 'returns 1.0 for a uniform 2-key distribution' do
+      counter = described_class.new(%w[a b])
+      expect(counter.entropy).to be_within(1e-9).of(1.0)
+    end
+
+    it 'returns 2.0 for a uniform 4-key distribution' do
+      counter = described_class.new(%w[a b c d])
+      expect(counter.entropy).to be_within(1e-9).of(2.0)
+    end
+
+    it 'returns a value less than the uniform upper bound for a skewed distribution' do
+      skewed = described_class.new(%w[a a a a a a a b c])
+      uniform = described_class.new(%w[a b c])
+      expect(skewed.entropy).to be < uniform.entropy
+    end
+  end
+
   describe '#filter_by_count' do
     it 'filters by minimum count' do
       counter = described_class.new(%w[a a a b b c])

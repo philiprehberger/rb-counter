@@ -7,6 +7,11 @@ and this gem adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-04-15
+
+### Added
+- `#entropy` method returning Shannon entropy of the count distribution in bits
+
 ## [0.3.0] - 2026-04-03
 
 ### Added
