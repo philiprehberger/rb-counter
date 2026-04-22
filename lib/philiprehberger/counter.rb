@@ -152,6 +152,21 @@ module Philiprehberger
       (@counts[key].to_f / total * 100)
     end
 
+    # Shannon entropy of the count distribution in bits
+    #
+    # @return [Float] entropy in bits, 0.0 for empty or single-key counters
+    def entropy
+      t = total.to_f
+      return 0.0 if t.zero?
+
+      @counts.each_value.sum do |c|
+        next 0.0 if c.zero?
+
+        p = c / t
+        -p * Math.log2(p)
+      end
+    end
+
     # Delete a key entirely from the counter
     #
     # @param key [Object]

@@ -130,6 +130,16 @@ frequent = counter.filter_by_count(min: 2)
 frequent.to_h  # => {"a" => 3, "b" => 2}
 ```
 
+### Entropy
+
+```ruby
+counter = Philiprehberger::Counter.new(%w[a b c d])
+counter.entropy  # => 2.0 (uniform 4-key distribution, bits)
+
+skewed = Philiprehberger::Counter.new(%w[a a a a b])
+skewed.entropy   # => ~0.7219 (less than uniform upper bound)
+```
+
 ## API
 
 | Method | Description |
@@ -155,6 +165,7 @@ frequent.to_h  # => {"a" => 3, "b" => 2}
 | `#keys` | Return all tracked keys |
 | `#values` | Return all count values |
 | `#filter_by_count(min:, max:)` | Filter entries by count range |
+| `#entropy` | Shannon entropy of the count distribution in bits |
 | `#to_h` | Convert to a plain hash |
 | `#size` | Number of unique keys |
 
