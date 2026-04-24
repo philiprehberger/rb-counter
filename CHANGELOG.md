@@ -7,6 +7,11 @@ and this gem adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-04-24
+
+### Added
+- `#mode` method returning the single most-common key (shorthand for `max_count.first`); returns `nil` for empty counters
+
 ## [0.4.0] - 2026-04-15
 
 ### Added

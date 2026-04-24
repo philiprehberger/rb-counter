@@ -95,6 +95,7 @@ counter.delete('z')  # => nil (key not present)
 counter = Philiprehberger::Counter.new(%w[a b a c a b])
 counter.max_count  # => ["a", 3]
 counter.min_count  # => ["c", 1]
+counter.mode       # => "a"
 ```
 
 ### JSON Serialization
@@ -159,6 +160,7 @@ skewed.entropy   # => ~0.7219 (less than uniform upper bound)
 | `#delete(key)` | Remove a key entirely, returns count or nil |
 | `#max_count` | Key-count pair with highest count |
 | `#min_count` | Key-count pair with lowest count |
+| `#mode` | Most-common key (just the key, not the pair) |
 | `#to_json` | Serialize counter to JSON string |
 | `.from_json(str)` | Deserialize counter from JSON string |
 | `#sample(n)` | Weighted random sample based on counts |

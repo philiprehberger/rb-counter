@@ -405,6 +405,28 @@ RSpec.describe Philiprehberger::Counter do
     end
   end
 
+  describe '#mode' do
+    it 'returns the most common key' do
+      counter = described_class.new(%w[a b a c a b])
+      expect(counter.mode).to eq('a')
+    end
+
+    it 'returns nil for empty counter' do
+      expect(described_class.new.mode).to be_nil
+    end
+
+    it 'returns the sole key for a single-key counter' do
+      counter = described_class.new(%w[x x])
+      expect(counter.mode).to eq('x')
+    end
+
+    it 'updates after mutations' do
+      counter = described_class.new(%w[a b])
+      counter.increment('b', 5)
+      expect(counter.mode).to eq('b')
+    end
+  end
+
   describe '#min_count' do
     it 'returns the key-count pair with lowest count' do
       counter = described_class.new(%w[a b a c a b])

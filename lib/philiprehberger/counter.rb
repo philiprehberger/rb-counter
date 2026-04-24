@@ -184,6 +184,17 @@ module Philiprehberger
       @counts.max_by { |_, count| count }
     end
 
+    # Return the single most-common key (the mode of the count distribution)
+    #
+    # When multiple keys tie for the highest count, returns the first one
+    # encountered via `Hash#max_by` (i.e., insertion order among ties).
+    #
+    # @return [Object, nil] the most-common key, or nil if empty
+    def mode
+      pair = max_count
+      pair && pair[0]
+    end
+
     # Return the [key, count] pair with the lowest count
     #
     # @return [Array, nil] [key, count] or nil if empty
