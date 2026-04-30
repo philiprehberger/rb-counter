@@ -152,6 +152,20 @@ module Philiprehberger
       (@counts[key].to_f / total * 100)
     end
 
+    # Ratio of unique keys to total observations
+    #
+    # A simple diversity / repetition metric. `1.0` means every observation
+    # was unique; small values mean a few keys dominate the counter. Returns
+    # `0.0` for empty counters.
+    #
+    # @return [Float] `size.to_f / total`, or `0.0` when total is zero
+    def unique_ratio
+      t = total
+      return 0.0 if t.zero?
+
+      size.to_f / t
+    end
+
     # Shannon entropy of the count distribution in bits
     #
     # @return [Float] entropy in bits, 0.0 for empty or single-key counters

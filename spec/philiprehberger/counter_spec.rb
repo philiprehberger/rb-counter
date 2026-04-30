@@ -552,6 +552,33 @@ RSpec.describe Philiprehberger::Counter do
     end
   end
 
+  describe '#unique_ratio' do
+    it 'returns 0.0 for an empty counter' do
+      expect(described_class.new.unique_ratio).to eq(0.0)
+    end
+
+    it 'returns 1.0 when every observation is unique' do
+      expect(described_class.new(%w[a b c d]).unique_ratio).to eq(1.0)
+    end
+
+    it 'returns 1.0 / total when all observations are the same key' do
+      counter = described_class.new(%w[a a a a])
+      expect(counter.unique_ratio).to be_within(1e-12).of(1.0 / 4)
+    end
+
+    it 'returns size / total for a mixed distribution' do
+      counter = described_class.new(%w[a a b b b c])
+      expect(counter.unique_ratio).to be_within(1e-12).of(3.0 / 6)
+    end
+
+    it 'tracks updates after construction' do
+      counter = described_class.new
+      counter.increment('a', 4)
+      counter.increment('b')
+      expect(counter.unique_ratio).to be_within(1e-12).of(2.0 / 5)
+    end
+  end
+
   describe '#filter_by_count' do
     it 'filters by minimum count' do
       counter = described_class.new(%w[a a a b b c])

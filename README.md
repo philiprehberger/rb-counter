@@ -141,6 +141,18 @@ skewed = Philiprehberger::Counter.new(%w[a a a a b])
 skewed.entropy   # => ~0.7219 (less than uniform upper bound)
 ```
 
+### Unique Ratio
+
+Ratio of unique keys to total observations — a simple diversity metric.
+`1.0` means every observation was unique; small values mean a few keys
+dominate.
+
+```ruby
+Philiprehberger::Counter.new(%w[a b c d]).unique_ratio    # => 1.0
+Philiprehberger::Counter.new(%w[a a a a]).unique_ratio    # => 0.25
+Philiprehberger::Counter.new(%w[a a b b b c]).unique_ratio # => 0.5
+```
+
 ## API
 
 | Method | Description |
@@ -168,6 +180,7 @@ skewed.entropy   # => ~0.7219 (less than uniform upper bound)
 | `#values` | Return all count values |
 | `#filter_by_count(min:, max:)` | Filter entries by count range |
 | `#entropy` | Shannon entropy of the count distribution in bits |
+| `#unique_ratio` | Ratio of unique keys to total observations (`size / total`); `0.0` for empty counters |
 | `#to_h` | Convert to a plain hash |
 | `#size` | Number of unique keys |
 

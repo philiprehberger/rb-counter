@@ -7,6 +7,11 @@ and this gem adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-04-30
+
+### Added
+- `#unique_ratio` — ratio of unique keys to total observations (`size / total`); `0.0` for empty counters; pairs with `#entropy` as a simple diversity metric
+
 ## [0.5.0] - 2026-04-24
 
 ### Added
