@@ -129,6 +129,27 @@ module Philiprehberger
       result
     end
 
+    # Compute the per-key signed difference between this counter and another
+    #
+    # Returns a Hash of `{ key => (self_count - other_count) }` for every key
+    # present in either counter, with zero deltas pruned. Useful for change
+    # detection between two snapshots (e.g. before/after, current/previous).
+    #
+    # @param other [Counter]
+    # @return [Hash{Object => Integer}] non-zero deltas keyed by element
+    # @raise [Error] if `other` is not a Counter
+    def diff(other)
+      raise Error, 'argument must be a Counter' unless other.is_a?(Counter)
+
+      keys_union = keys | other.keys
+      result = {}
+      keys_union.each do |key|
+        delta = @counts[key] - other[key]
+        result[key] = delta unless delta.zero?
+      end
+      result
+    end
+
     # Subtract another counter from this one
     #
     # @param other [Counter]

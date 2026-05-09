@@ -610,4 +610,38 @@ RSpec.describe Philiprehberger::Counter do
       expect(result.size).to eq(0)
     end
   end
+
+  describe '#diff' do
+    it 'returns positive deltas for keys with higher counts in self' do
+      a = described_class.new(%w[x x x y])
+      b = described_class.new(%w[x y])
+      expect(a.diff(b)).to eq({ 'x' => 2 })
+    end
+
+    it 'returns negative deltas for keys with higher counts in other' do
+      a = described_class.new(%w[x])
+      b = described_class.new(%w[x x x y])
+      expect(a.diff(b)).to eq({ 'x' => -2, 'y' => -1 })
+    end
+
+    it 'omits keys with equal counts' do
+      a = described_class.new(%w[x x y y])
+      b = described_class.new(%w[x x y y])
+      expect(a.diff(b)).to eq({})
+    end
+
+    it 'includes keys present only on one side' do
+      a = described_class.new(%w[x y])
+      b = described_class.new(%w[y z z])
+      expect(a.diff(b)).to eq({ 'x' => 1, 'z' => -2 })
+    end
+
+    it 'returns an empty hash when both counters are empty' do
+      expect(described_class.new.diff(described_class.new)).to eq({})
+    end
+
+    it 'raises Error when given a non-Counter argument' do
+      expect { described_class.new.diff({}) }.to raise_error(described_class::Error)
+    end
+  end
 end

@@ -7,6 +7,11 @@ and this gem adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-09
+
+### Added
+- `Counter#diff(other)` — return a Hash of `{key => signed_delta}` between two counters; only emits keys whose counts changed (equal counts are pruned). Useful for change detection between snapshots.
+
 ## [0.6.0] - 2026-04-30
 
 ### Added

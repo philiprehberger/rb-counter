@@ -141,6 +141,20 @@ skewed = Philiprehberger::Counter.new(%w[a a a a b])
 skewed.entropy   # => ~0.7219 (less than uniform upper bound)
 ```
 
+### Diff Between Counters
+
+```ruby
+before = Philiprehberger::Counter.new(%w[errors errors warnings])
+after  = Philiprehberger::Counter.new(%w[errors errors errors warnings infos])
+
+after.diff(before)
+# => { "errors" => 1, "infos" => 1 }
+```
+
+Returns a Hash of `{ key => signed_delta }` for every key whose count
+changed; equal counts are pruned. Useful for change detection between
+snapshots.
+
 ### Unique Ratio
 
 Ratio of unique keys to total observations — a simple diversity metric.
@@ -165,6 +179,7 @@ Philiprehberger::Counter.new(%w[a a b b b c]).unique_ratio # => 0.5
 | `#total` | Sum of all counts |
 | `#merge(other)` | Merge two counters |
 | `#subtract(other)` | Subtract another counter |
+| `#diff(other)` | Hash of `{key => signed_delta}` for keys whose counts differ |
 | `#percentage(key)` | Percentage of key relative to total |
 | `#decrement(key, n)` | Decrement count for a key, floored at zero |
 | `#reset(key)` | Reset a specific key or clear all counts |
